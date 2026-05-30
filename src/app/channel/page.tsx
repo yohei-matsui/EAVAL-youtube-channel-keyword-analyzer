@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { KeywordResult } from "@/app/api/channel-keywords/route";
 import { VideoItem } from "@/app/api/channel/route";
 import { KeywordsTable } from "@/components/channel/KeywordsTable";

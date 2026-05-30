@@ -56,8 +56,8 @@ async function resolveChannelId(input: { type: string; value: string }, apiKey: 
   return searchData.items?.[0]?.snippet?.channelId ?? null;
 }
 
-async function fetchVideoDetails(videoIds: string[], apiKey: string): Promise<Map<string, { viewCount: number; title: string; publishedAt: string }>> {
-  const map = new Map<string, { viewCount: number; title: string; publishedAt: string }>();
+async function fetchVideoDetails(videoIds: string[], apiKey: string): Promise<Map<string, { viewCount: number; title: string; publishedAt: string; thumbnailUrl: string }>> {
+  const map = new Map<string, { viewCount: number; title: string; publishedAt: string; thumbnailUrl: string }>();
   if (videoIds.length === 0) return map;
 
   const url = new URL("https://www.googleapis.com/youtube/v3/videos");
