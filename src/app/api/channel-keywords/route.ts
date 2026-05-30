@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
     const medianUsage = usages.sort((a, b) => a - b)[Math.floor(usages.length / 2)] ?? 0;
     const highUsageThreshold        = Math.max(3, Math.ceil(medianUsage));
     const highTitleUsageThreshold   = 3;
-    const highThumbUsageThreshold   = 2;
+    const highThumbUsageThreshold   = 3;
 
     keywords = keywords.map((kw) => {
       const matchingVideos = videos.filter((v) => v.title.includes(kw.keyword));
