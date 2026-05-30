@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
 
     if (format === "pdf") {
       const bytes = await buildPdf(keywords, channelName);
-      return new NextResponse(bytes, {
+      return new NextResponse(Buffer.from(bytes), {
         headers: {
           "Content-Type": "application/pdf",
           "Content-Disposition": `attachment; filename="keywords_${Date.now()}.pdf"`,
