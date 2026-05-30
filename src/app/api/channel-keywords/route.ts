@@ -144,7 +144,9 @@ export async function POST(request: NextRequest) {
     if (!Array.isArray(keywords)) throw new Error("Not an array");
     // Calculate title usage by actual string match, combine with Gemini's thumbnail count
     keywords = keywords.map((kw) => {
-      const titleUsage = videos.filter((v) => v.title.includes(kw.keyword)).length;
+      // Split compound keywords (e.g. "実践/実演", "A・B") and match any part
+      const parts = kw.keyword.split(/[/／・、,，]/).map((p) => p.trim()).filter(Boolean);
+      const titleUsage = videos.filter((v) => parts.some((p) => v.title.includes(p))).length;
       const thumbnailUsage = typeof kw.thumbnailUsage === "number" ? kw.thumbnailUsage : 0;
       return { ...kw, titleUsage, thumbnailUsage, usage: titleUsage + thumbnailUsage };
     });
