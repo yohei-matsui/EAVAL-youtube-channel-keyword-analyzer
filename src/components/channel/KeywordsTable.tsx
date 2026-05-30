@@ -142,7 +142,11 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
                     </div>
                   </td>
                   <td className="px-3 py-3 text-center">
-                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold" style={{ backgroundColor: "#E8E0D0", color: "#4A3C2A" }}>
+                    <span
+                      title={`📝 タイトル: ${kw.titleUsage ?? kw.usage}件 / 🖼 サムネイル: ${kw.thumbnailUsage ?? 0}件`}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold cursor-help"
+                      style={{ backgroundColor: "#E8E0D0", color: "#4A3C2A" }}
+                    >
                       {kw.usage}
                     </span>
                   </td>

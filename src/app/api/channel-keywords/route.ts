@@ -5,6 +5,8 @@ import { VideoItem } from "../channel/route";
 export interface KeywordResult {
   keyword: string;
   usage: number;
+  titleUsage: number;
+  thumbnailUsage: number;
   reason: string;
   category: string;
   points: number;
@@ -93,7 +95,8 @@ export async function POST(request: NextRequest) {
 [
   {
     "keyword": "キーワード文字列",
-    "usage": 登場回数(整数),
+    "usage": 0,
+    "thumbnailUsage": サムネイル画像内にテキストとして写っている枚数(整数),
     "reason": "このキーワードが有効な理由（50字以内）",
     "category": "テーマ"|"手法"|"ターゲット"|"感情"|"トレンド"|"商品・サービス",
     "points": 重要度スコア1〜100(整数),
@@ -106,6 +109,10 @@ export async function POST(request: NextRequest) {
 - "タイトル": 動画タイトルのテキストから検出したキーワード
 - "サムネイル": サムネイル画像の視覚情報（テキスト・被写体・デザイン）から検出したキーワード
 - "両方": タイトルとサムネイル両方に登場するキーワード
+
+## thumbnailUsageフィールドのルール
+- 提供されたサムネイル画像の中で、そのキーワードの文字列が画像内テキストとして実際に写っている枚数を数える
+- 被写体やデザインテーマとして登場する場合はカウントしない（文字として写っている場合のみ）
 
 ## 注意事項
 - タイトル由来を10〜15個、サムネイル由来を5〜10個（合計15〜25個）抽出する
@@ -134,11 +141,12 @@ export async function POST(request: NextRequest) {
   try {
     keywords = JSON.parse(stripCodeFences(raw));
     if (!Array.isArray(keywords)) throw new Error("Not an array");
-    // Override usage with actual title match count
-    keywords = keywords.map((kw) => ({
-      ...kw,
-      usage: videos.filter((v) => v.title.includes(kw.keyword)).length,
-    }));
+    // Calculate title usage by actual string match, combine with Gemini's thumbnail count
+    keywords = keywords.map((kw) => {
+      const titleUsage = videos.filter((v) => v.title.includes(kw.keyword)).length;
+      const thumbnailUsage = typeof kw.thumbnailUsage === "number" ? kw.thumbnailUsage : 0;
+      return { ...kw, titleUsage, thumbnailUsage, usage: titleUsage + thumbnailUsage };
+    });
   } catch {
     console.error("[channel-keywords] Parse failed. Raw:", raw.slice(0, 300));
     return NextResponse.json(
