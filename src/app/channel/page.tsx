@@ -537,37 +537,7 @@ export default function ChannelPage() {
               列ヘッダーをクリックしてソート・行をクリックして理由・関連動画を展開
             </p>
 
-            {/* Title keywords section */}
-            {(() => {
-              const titleKws = filteredKeywords.filter(k => k.source === "タイトル" || k.source === "両方");
-              return titleKws.length > 0 ? (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                      📝 タイトル分析
-                    </span>
-                    <span className="text-xs text-gray-400">{titleKws.length} 件</span>
-                  </div>
-                  <KeywordsTable keywords={titleKws} showSource={true} />
-                </div>
-              ) : null;
-            })()}
-
-            {/* Thumbnail keywords section */}
-            {(() => {
-              const thumbKws = filteredKeywords.filter(k => k.source === "サムネイル" || k.source === "両方");
-              return thumbKws.length > 0 ? (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-700">
-                      🖼 サムネイル分析
-                    </span>
-                    <span className="text-xs text-gray-400">{thumbKws.length} 件</span>
-                  </div>
-                  <KeywordsTable keywords={thumbKws} showSource={true} />
-                </div>
-              ) : null;
-            })()}
+            <KeywordsTable keywords={filteredKeywords} showSource={true} />
 
             <button
               onClick={reset}
