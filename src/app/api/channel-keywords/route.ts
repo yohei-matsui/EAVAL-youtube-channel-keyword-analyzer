@@ -134,6 +134,11 @@ export async function POST(request: NextRequest) {
   try {
     keywords = JSON.parse(stripCodeFences(raw));
     if (!Array.isArray(keywords)) throw new Error("Not an array");
+    // Override usage with actual title match count
+    keywords = keywords.map((kw) => ({
+      ...kw,
+      usage: videos.filter((v) => v.title.includes(kw.keyword)).length,
+    }));
   } catch {
     console.error("[channel-keywords] Parse failed. Raw:", raw.slice(0, 300));
     return NextResponse.json(
