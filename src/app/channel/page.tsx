@@ -531,7 +531,10 @@ export default function ChannelPage() {
             </div>
 
             <p className="text-[11px] text-gray-400">
-              列ヘッダーをクリックしてソート・行をクリックして関連動画を展開
+              ※180秒（3分）以下の短尺動画は除外しています
+            </p>
+            <p className="text-[11px] text-gray-400">
+              列ヘッダーをクリックしてソート・行をクリックして理由・関連動画を展開
             </p>
 
             {/* Title keywords section */}
