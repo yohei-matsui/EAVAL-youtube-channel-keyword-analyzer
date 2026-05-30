@@ -500,6 +500,28 @@ export default function ChannelPage() {
               })}
             </div>
 
+            {/* Tag legend */}
+            <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <p className="mb-2 text-[11px] font-semibold text-gray-500">指標タグの説明</p>
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                {[
+                  { tag: "高頻出",         bg: "#FEF3C7", color: "#92400E", desc: "タイトル＋サムネイルの合計出現数が多い" },
+                  { tag: "再生数多",       bg: "#D1FAE5", color: "#065F46", desc: "関連動画の平均再生数がチャンネル平均の1.5倍超" },
+                  { tag: "ハイトレンド",   bg: "#DBEAFE", color: "#1E40AF", desc: "4ヶ月以内の投稿に2件以上含まれる" },
+                  { tag: "超ハイトレンド", bg: "#EDE9FE", color: "#5B21B6", desc: "2ヶ月以内の投稿に2件以上含まれる" },
+                  { tag: "タイトル高頻出", bg: "#E0F2FE", color: "#0369A1", desc: "タイトルへの出現が3件以上" },
+                  { tag: "サムネイル高頻出",bg: "#FCE7F3", color: "#9D174D", desc: "サムネイル内テキストへの出現が3件以上" },
+                ].map(({ tag, bg, color, desc }) => (
+                  <div key={tag} className="flex items-center gap-1.5">
+                    <span style={{ backgroundColor: bg, color }} className="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold flex-shrink-0">
+                      {tag}
+                    </span>
+                    <span className="text-[11px] text-gray-500">{desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <p className="text-[11px] text-gray-400">
               列ヘッダーをクリックしてソート・行をクリックして関連動画を展開
             </p>
