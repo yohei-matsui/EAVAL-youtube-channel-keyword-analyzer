@@ -12,6 +12,7 @@ export interface KeywordResult {
   points: number;
   videos: string[];
   source: "タイトル" | "サムネイル" | "両方";
+  tags: string[];
 }
 
 function stripCodeFences(raw: string): string {
@@ -146,6 +147,36 @@ export async function POST(request: NextRequest) {
       const titleUsage = videos.filter((v) => v.title.includes(kw.keyword)).length;
       const thumbnailUsage = typeof kw.thumbnailUsage === "number" ? kw.thumbnailUsage : 0;
       return { ...kw, titleUsage, thumbnailUsage, usage: titleUsage + thumbnailUsage };
+    });
+
+    // Compute tags server-side
+    const now = Date.now();
+    const oneMonthMs  = 30  * 24 * 60 * 60 * 1000;
+    const threeMonthMs = 90 * 24 * 60 * 60 * 1000;
+    const usages = keywords.map((k) => k.usage);
+    const medianUsage = usages.sort((a, b) => a - b)[Math.floor(usages.length / 2)] ?? 0;
+    const highUsageThreshold        = Math.max(3, Math.ceil(medianUsage));
+    const highTitleUsageThreshold   = 3;
+    const highThumbUsageThreshold   = 2;
+
+    keywords = keywords.map((kw) => {
+      const matchingVideos = videos.filter((v) => v.title.includes(kw.keyword));
+      const avgMatchViews  = matchingVideos.length > 0
+        ? matchingVideos.reduce((s, v) => s + v.viewCount, 0) / matchingVideos.length
+        : 0;
+      const latestMs = matchingVideos.length > 0
+        ? Math.max(...matchingVideos.map((v) => new Date(v.publishedAt).getTime()))
+        : 0;
+
+      const tags: string[] = [];
+      if (kw.usage        >= highUsageThreshold)      tags.push("高頻出");
+      if (avgMatchViews   >  avgViews * 1.5)           tags.push("再生数多");
+      if (latestMs        >  now - threeMonthMs)       tags.push("ハイトレンド");
+      if (latestMs        >  now - oneMonthMs)         tags.push("超ハイトレンド");
+      if (kw.titleUsage   >= highTitleUsageThreshold)  tags.push("タイトル高頻出");
+      if (kw.thumbnailUsage >= highThumbUsageThreshold) tags.push("サムネイル高頻出");
+
+      return { ...kw, tags };
     });
   } catch {
     console.error("[channel-keywords] Parse failed. Raw:", raw.slice(0, 300));

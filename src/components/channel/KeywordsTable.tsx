@@ -38,18 +38,33 @@ function SourceBadge({ source }: { source: string }) {
   );
 }
 
-function ScoreBar({ score }: { score: number }) {
+const TAG_STYLE: Record<string, { bg: string; color: string }> = {
+  "高頻出":         { bg: "#FEF3C7", color: "#92400E" },
+  "再生数多":       { bg: "#D1FAE5", color: "#065F46" },
+  "ハイトレンド":   { bg: "#DBEAFE", color: "#1E40AF" },
+  "超ハイトレンド": { bg: "#EDE9FE", color: "#5B21B6" },
+  "タイトル高頻出": { bg: "#E0F2FE", color: "#0369A1" },
+  "サムネイル高頻出":{ bg: "#FCE7F3", color: "#9D174D" },
+};
+
+function TagBadges({ tags }: { tags: string[] }) {
+  if (!tags || tags.length === 0) return <span className="text-xs" style={{ color: "#C0B8A8" }}>—</span>;
   return (
-    <div className="flex items-center gap-2 justify-center">
-      <div className="h-1.5 w-14 rounded-full overflow-hidden flex-shrink-0" style={{ backgroundColor: "#E0D8CC" }}>
-        <div className="h-full rounded-full transition-all" style={{ width: `${score}%`, backgroundColor: "#2C2C2C" }} />
-      </div>
-      <span className="text-xs font-bold w-7 text-right" style={{ color: "#2C2C2C" }}>{score}</span>
+    <div className="flex flex-wrap gap-1 justify-center">
+      {tags.map((tag) => {
+        const s = TAG_STYLE[tag] ?? { bg: "#E0E0E0", color: "#3A3A3A" };
+        return (
+          <span key={tag} style={{ backgroundColor: s.bg, color: s.color }}
+            className="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold">
+            {tag}
+          </span>
+        );
+      })}
     </div>
   );
 }
 
-type SortKey = "points" | "usage" | "keyword" | "category";
+type SortKey = "usage" | "keyword" | "category";
 
 interface Props {
   keywords: KeywordResult[];
@@ -57,14 +72,13 @@ interface Props {
 }
 
 export function KeywordsTable({ keywords, showSource = false }: Props) {
-  const [sortKey, setSortKey] = useState<SortKey>("points");
+  const [sortKey, setSortKey] = useState<SortKey>("usage");
   const [sortAsc, setSortAsc] = useState(false);
   const [expanded, setExpanded] = useState<number | null>(null);
 
   const sorted = [...keywords].sort((a, b) => {
     let cmp = 0;
-    if (sortKey === "points") cmp = a.points - b.points;
-    else if (sortKey === "usage") cmp = a.usage - b.usage;
+    if (sortKey === "usage") cmp = a.usage - b.usage;
     else if (sortKey === "keyword") cmp = a.keyword.localeCompare(b.keyword, "ja");
     else if (sortKey === "category") cmp = a.category.localeCompare(b.category, "ja");
     return sortAsc ? cmp : -cmp;
@@ -86,7 +100,7 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
     { label: "キーワード",  key: "keyword",  cls: "text-left min-w-[110px]" },
     { label: "使用数",      key: "usage",    cls: "w-20 text-center" },
     { label: "カテゴリ",    key: "category", cls: "w-32 text-center" },
-    { label: "スコア",      key: "points",   cls: "w-32 text-center" },
+    { label: "指標タグ",     key: null,       cls: "w-48 text-center" },
     ...(showSource ? [{ label: "出典", key: null as null, cls: "w-32 text-center" }] : []),
     { label: "理由",        key: null,       cls: "text-left" },
   ];
@@ -99,7 +113,7 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
           <col />
           <col style={{ width: "80px" }} />
           <col style={{ width: "128px" }} />
-          <col style={{ width: "128px" }} />
+          <col style={{ width: "192px" }} />
           {showSource && <col style={{ width: "128px" }} />}
           <col />
         </colgroup>
@@ -151,7 +165,7 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
                     </span>
                   </td>
                   <td className="px-3 py-3 text-center"><CategoryBadge category={kw.category} /></td>
-                  <td className="px-3 py-3"><div className="flex justify-center"><ScoreBar score={kw.points} /></div></td>
+                  <td className="px-3 py-3"><TagBadges tags={kw.tags ?? []} /></td>
                   {showSource && (
                     <td className="px-3 py-3 text-center"><SourceBadge source={kw.source ?? "タイトル"} /></td>
                   )}
