@@ -56,12 +56,18 @@ async function resolveChannelId(input: { type: string; value: string }, apiKey: 
   return searchData.items?.[0]?.snippet?.channelId ?? null;
 }
 
+function parseDurationSeconds(iso: string): number {
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return 0;
+  return (parseInt(m[1] ?? "0") * 3600) + (parseInt(m[2] ?? "0") * 60) + parseInt(m[3] ?? "0");
+}
+
 async function fetchVideoDetails(videoIds: string[], apiKey: string): Promise<Map<string, { viewCount: number; title: string; publishedAt: string; thumbnailUrl: string }>> {
   const map = new Map<string, { viewCount: number; title: string; publishedAt: string; thumbnailUrl: string }>();
   if (videoIds.length === 0) return map;
 
   const url = new URL("https://www.googleapis.com/youtube/v3/videos");
-  url.searchParams.set("part", "statistics,snippet");
+  url.searchParams.set("part", "statistics,snippet,contentDetails");
   url.searchParams.set("id", videoIds.join(","));
   url.searchParams.set("key", apiKey);
 
@@ -69,9 +75,12 @@ async function fetchVideoDetails(videoIds: string[], apiKey: string): Promise<Ma
   const data = await res.json();
 
   for (const item of data.items ?? []) {
+    // Exclude Shorts (60 seconds or under)
+    const duration = parseDurationSeconds(item.contentDetails?.duration ?? "");
+    if (duration <= 60) continue;
+
     const thumbs = item.snippet?.thumbnails;
-    const thumbnailUrl =
-      thumbs?.medium?.url ?? thumbs?.default?.url ?? "";
+    const thumbnailUrl = thumbs?.medium?.url ?? thumbs?.default?.url ?? "";
     map.set(item.id, {
       viewCount: parseInt(item.statistics?.viewCount ?? "0", 10),
       title: item.snippet?.title ?? "",
