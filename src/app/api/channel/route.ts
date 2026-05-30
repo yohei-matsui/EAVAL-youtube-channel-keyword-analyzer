@@ -6,6 +6,7 @@ export interface VideoItem {
   viewCount: number;
   publishedAt: string;
   type: "recent" | "popular";
+  thumbnailUrl: string;
 }
 
 function parseChannelInput(input: string): { type: "id" | "handle" | "url"; value: string } {
@@ -68,10 +69,14 @@ async function fetchVideoDetails(videoIds: string[], apiKey: string): Promise<Ma
   const data = await res.json();
 
   for (const item of data.items ?? []) {
+    const thumbs = item.snippet?.thumbnails;
+    const thumbnailUrl =
+      thumbs?.medium?.url ?? thumbs?.default?.url ?? "";
     map.set(item.id, {
       viewCount: parseInt(item.statistics?.viewCount ?? "0", 10),
       title: item.snippet?.title ?? "",
       publishedAt: item.snippet?.publishedAt ?? "",
+      thumbnailUrl,
     });
   }
   return map;
@@ -150,11 +155,11 @@ export async function POST(request: NextRequest) {
   const channelInfo = chData.items?.[0];
 
   const [recentVideos, popularVideos] = await Promise.all([
-    fetchChannelVideos(channelId, apiKey, "date", 50),
-    fetchChannelVideos(channelId, apiKey, "viewCount", 50),
+    fetchChannelVideos(channelId, apiKey, "date", 30),
+    fetchChannelVideos(channelId, apiKey, "viewCount", 30),
   ]);
 
-  // Deduplicate: if a video appears in both, keep the popular tag
+  // Deduplicate: popular takes priority; recent-only videos are appended
   const seenIds = new Set<string>();
   const allVideos: VideoItem[] = [];
 
@@ -163,10 +168,9 @@ export async function POST(request: NextRequest) {
     allVideos.push(v);
   }
   for (const v of recentVideos) {
-    if (!seenIds.has(v.id)) allVideos.push(v);
-    else {
-      const existing = allVideos.find((x) => x.id === v.id);
-      if (existing) existing.type = "popular"; // already popular
+    if (!seenIds.has(v.id)) {
+      seenIds.add(v.id);
+      allVideos.push(v);
     }
   }
 

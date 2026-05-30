@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import { VideoItem } from "../channel/route";
 
 export interface KeywordResult {
@@ -14,6 +14,24 @@ export interface KeywordResult {
 function stripCodeFences(raw: string): string {
   const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
   return (match ? match[1] : raw).trim();
+}
+
+// Fetch thumbnail and convert to base64 inline data
+async function fetchThumbnailPart(url: string): Promise<Part | null> {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) return null;
+    const contentType = res.headers.get("content-type") ?? "image/jpeg";
+    const buf = await res.arrayBuffer();
+    return {
+      inlineData: {
+        mimeType: contentType.split(";")[0],
+        data: Buffer.from(buf).toString("base64"),
+      },
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -32,8 +50,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No video data provided" }, { status: 400 });
   }
 
-  const avgViews =
-    videos.reduce((sum, v) => sum + v.viewCount, 0) / videos.length;
+  const avgViews = videos.reduce((sum, v) => sum + v.viewCount, 0) / videos.length;
 
   const videoList = videos
     .map(
@@ -42,20 +59,35 @@ export async function POST(request: NextRequest) {
     )
     .join("\n");
 
+  // Fetch top 20 thumbnails by view count
+  const top20 = [...videos]
+    .sort((a, b) => b.viewCount - a.viewCount)
+    .slice(0, 20)
+    .filter((v) => v.thumbnailUrl);
+
+  const thumbnailParts = (
+    await Promise.all(top20.map((v) => fetchThumbnailPart(v.thumbnailUrl)))
+  ).filter((p): p is Part => p !== null);
+
   const systemInstruction = `あなたはYouTubeチャンネルのコンテンツ戦略アナリストです。
-チャンネルの動画タイトル・再生数・投稿日データを分析し、効果的なキーワードを抽出してください。
+動画タイトル・再生数・投稿日のテキストデータと、上位動画のサムネイル画像を合わせて分析し、効果的なキーワードを抽出してください。
+
+## 分析対象
+- テキスト: 全動画のタイトル・再生数・投稿日
+- 画像: 再生数上位20件のサムネイル（視覚的なテーマ・色使い・文字・構図も分析）
 
 ## 抽出基準
 - 高再生数: チャンネル平均（${Math.round(avgViews).toLocaleString()}回）を上回る動画に含まれるキーワード
-- 頻出度: 複数の動画タイトルに繰り返し登場するキーワード
-- トレンド: 直近3ヶ月以内に投稿された動画で使われているキーワード
+- 頻出度: タイトルまたはサムネイルに繰り返し登場するキーワード
+- トレンド: 直近3ヶ月以内の動画で使われているキーワード
+- サムネイル: 画像から読み取れる共通テーマ・文字・被写体・スタイル
 
 ## 出力フォーマット
 必ずJSON配列のみで出力してください（コードブロック・説明文不要）：
 [
   {
     "keyword": "キーワード文字列",
-    "usage": 動画タイトルに登場した回数(整数),
+    "usage": 動画タイトルまたはサムネイルへの登場回数(整数),
     "reason": "このキーワードが有効な理由（50字以内）",
     "category": "テーマ"|"手法"|"ターゲット"|"感情"|"トレンド"|"商品・サービス",
     "points": 重要度スコア1〜100(整数),
@@ -66,20 +98,20 @@ export async function POST(request: NextRequest) {
 ## 注意事項
 - 15〜25個のキーワードを抽出する
 - pointsの降順でソートする
-- 単語・フレーズ両方を対象とする（助詞除く）
-- 人名・固有名詞も含めてよい
+- タイトル由来・サムネイル由来どちらも含める
 - JSON以外の文字を一切出力しない`;
 
-  const prompt = `チャンネル名: ${channelName}\n動画数: ${videos.length}件\n\n## 動画データ\n${videoList}`;
+  const textPart: Part = {
+    text: `チャンネル名: ${channelName}\n動画数: ${videos.length}件\n\n## 動画データ（全件）\n${videoList}\n\n## サムネイル画像（再生数上位${thumbnailParts.length}件）`,
+  };
 
   let raw = "";
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const generativeModel = genAI.getGenerativeModel({
-      model,
-      systemInstruction,
+    const generativeModel = genAI.getGenerativeModel({ model, systemInstruction });
+    const result = await generativeModel.generateContent({
+      contents: [{ role: "user", parts: [textPart, ...thumbnailParts] }],
     });
-    const result = await generativeModel.generateContent(prompt);
     raw = result.response.text();
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
