@@ -98,7 +98,7 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
   const cols: { label: string; key: SortKey | null; cls: string }[] = [
     { label: "#",          key: null,       cls: "w-9 text-center" },
     { label: "キーワード",  key: "keyword",  cls: "text-left min-w-[110px]" },
-    { label: "使用数",      key: "usage",    cls: "w-20 text-center" },
+    { label: "使用数",      key: "usage",    cls: "w-28 text-center" },
     { label: "カテゴリ",    key: "category", cls: "w-32 text-center" },
     { label: "指標タグ",     key: null,       cls: "w-48 text-center" },
     ...(showSource ? [{ label: "出典", key: null as null, cls: "w-32 text-center" }] : []),
@@ -111,7 +111,7 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
         <colgroup>
           <col style={{ width: "36px" }} />
           <col />
-          <col style={{ width: "80px" }} />
+          <col style={{ width: "112px" }} />
           <col style={{ width: "128px" }} />
           <col style={{ width: "192px" }} />
           {showSource && <col style={{ width: "128px" }} />}
@@ -156,13 +156,18 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
                     </div>
                   </td>
                   <td className="px-3 py-3 text-center">
-                    <span
-                      title={`📝 タイトル: ${kw.titleUsage ?? kw.usage}件 / 🖼 サムネイル: ${kw.thumbnailUsage ?? 0}件`}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold cursor-help"
-                      style={{ backgroundColor: "#E8E0D0", color: "#4A3C2A" }}
-                    >
-                      {kw.usage}
-                    </span>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="flex items-center gap-1 text-xs" style={{ color: "#1E40AF" }}>
+                        <span className="text-[10px]">📝</span>
+                        <span className="font-bold">{kw.titleUsage ?? 0}</span>
+                        <span className="text-[10px] opacity-60">件</span>
+                      </span>
+                      <span className="flex items-center gap-1 text-xs" style={{ color: "#9D174D" }}>
+                        <span className="text-[10px]">🖼</span>
+                        <span className="font-bold">{kw.thumbnailUsage ?? 0}</span>
+                        <span className="text-[10px] opacity-60">件</span>
+                      </span>
+                    </div>
                   </td>
                   <td className="px-3 py-3 text-center"><CategoryBadge category={kw.category} /></td>
                   <td className="px-3 py-3"><TagBadges tags={kw.tags ?? []} /></td>
