@@ -127,18 +127,35 @@ function StepCard({
 // ── Progress bar ────────────────────────────────────────────────────────────
 function ProgressBar({ step }: { step: Step }) {
   const steps = [
-    { key: "fetching", label: "動画データ取得中…" },
-    { key: "analyzing", label: "Gemini AIがキーワードを分析中…" },
+    { key: "fetching",  label: "動画データ取得中…",          cap: 45 },
+    { key: "analyzing", label: "Gemini AIがキーワードを分析中…", cap: 90 },
   ];
   const idx = steps.findIndex((s) => s.key === step);
+  const [pct, setPct] = useState(0);
+
+  useEffect(() => {
+    if (idx === -1) return;
+    const start = idx === 0 ? 0 : 50;
+    const cap   = steps[idx].cap;
+    setPct(start);
+    const id = setInterval(() => {
+      setPct((prev) => {
+        const next = prev + 10;
+        if (next >= cap) { clearInterval(id); return cap; }
+        return next;
+      });
+    }, 1200);
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx]);
+
   if (idx === -1) return null;
-  const pct = ((idx + 0.5) / steps.length) * 100;
 
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className="mb-2 flex items-center justify-between">
         <p className="text-sm font-medium text-gray-700">{steps[idx].label}</p>
-        <span className="text-xs text-gray-400">{Math.round(pct)}%</span>
+        <span className="text-xs text-gray-400">{pct}%</span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
         <div
