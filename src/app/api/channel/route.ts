@@ -77,7 +77,7 @@ async function fetchVideoDetails(videoIds: string[], apiKey: string): Promise<Ma
   for (const item of data.items ?? []) {
     // Exclude Shorts (60 seconds or under)
     const duration = parseDurationSeconds(item.contentDetails?.duration ?? "");
-    if (duration <= 60) continue;
+    if (duration <= 180) continue;
 
     const thumbs = item.snippet?.thumbnails;
     const thumbnailUrl = thumbs?.medium?.url ?? thumbs?.default?.url ?? "";
