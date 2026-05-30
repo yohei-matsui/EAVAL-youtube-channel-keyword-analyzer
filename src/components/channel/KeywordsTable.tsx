@@ -102,7 +102,6 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
     { label: "カテゴリ",    key: "category", cls: "w-32 text-center" },
     { label: "指標タグ",     key: null,       cls: "w-48 text-center" },
     ...(showSource ? [{ label: "出典", key: null as null, cls: "w-32 text-center" }] : []),
-    { label: "理由",        key: null,       cls: "text-left" },
   ];
 
   return (
@@ -115,7 +114,6 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
           <col style={{ width: "128px" }} />
           <col style={{ width: "192px" }} />
           {showSource && <col style={{ width: "128px" }} />}
-          <col />
         </colgroup>
 
         <thead>
@@ -174,23 +172,28 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
                   {showSource && (
                     <td className="px-3 py-3 text-center"><SourceBadge source={kw.source ?? "タイトル"} /></td>
                   )}
-                  <td className="px-3 py-3 text-xs" style={{ color: "#5A5A5A" }}><p>{kw.reason}</p></td>
                 </tr>
 
                 {isExpanded && (
                   <tr key={`${kw.keyword}-exp`} style={{ backgroundColor: "#EDE6D8", borderTop: "1px solid #D4CCB8" }}>
-                    <td colSpan={cols.length} className="px-5 py-3">
-                      <p className="mb-1.5 text-xs font-semibold" style={{ color: "#4A3C2A" }}>関連動画タイトル</p>
-                      <ul className="space-y-1">
-                        {kw.videos.map((v, vi) => (
-                          <li key={vi} className="flex items-start gap-2 text-xs" style={{ color: "#3A3A3A" }}>
-                            <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold" style={{ backgroundColor: "#2C2C2C", color: "#F5F0E8" }}>
-                              {vi + 1}
-                            </span>
-                            {v}
-                          </li>
-                        ))}
-                      </ul>
+                    <td colSpan={cols.length} className="px-5 py-3 space-y-2">
+                      <div>
+                        <p className="mb-1 text-xs font-semibold" style={{ color: "#4A3C2A" }}>理由</p>
+                        <p className="text-xs" style={{ color: "#3A3A3A" }}>{kw.reason}</p>
+                      </div>
+                      <div>
+                        <p className="mb-1 text-xs font-semibold" style={{ color: "#4A3C2A" }}>関連動画タイトル</p>
+                        <ul className="space-y-1">
+                          {kw.videos.map((v, vi) => (
+                            <li key={vi} className="flex items-start gap-2 text-xs" style={{ color: "#3A3A3A" }}>
+                              <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold" style={{ backgroundColor: "#2C2C2C", color: "#F5F0E8" }}>
+                                {vi + 1}
+                              </span>
+                              {v}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </td>
                   </tr>
                 )}

@@ -502,6 +502,14 @@ export default function ChannelPage() {
 
             {/* Tag legend */}
             <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1">
+                <span className="flex items-center gap-1 text-[11px] text-gray-600">
+                  <span>📝</span><span className="font-semibold">タイトル</span><span className="text-gray-400">— 動画タイトルへの出現数</span>
+                </span>
+                <span className="flex items-center gap-1 text-[11px] text-gray-600">
+                  <span>🖼</span><span className="font-semibold">サムネイル</span><span className="text-gray-400">— サムネイル画像内テキストへの出現数</span>
+                </span>
+              </div>
               <p className="mb-2 text-[11px] font-semibold text-gray-500">指標タグの説明</p>
               <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                 {[
