@@ -151,8 +151,8 @@ export async function POST(request: NextRequest) {
 
     // Compute tags server-side
     const now = Date.now();
-    const oneMonthMs  = 30  * 24 * 60 * 60 * 1000;
-    const threeMonthMs = 90 * 24 * 60 * 60 * 1000;
+    const twoMonthMs  = 60  * 24 * 60 * 60 * 1000;
+    const fourMonthMs = 120 * 24 * 60 * 60 * 1000;
     const usages = keywords.map((k) => k.usage);
     const medianUsage = usages.sort((a, b) => a - b)[Math.floor(usages.length / 2)] ?? 0;
     const highUsageThreshold        = Math.max(3, Math.ceil(medianUsage));
@@ -164,15 +164,14 @@ export async function POST(request: NextRequest) {
       const avgMatchViews  = matchingVideos.length > 0
         ? matchingVideos.reduce((s, v) => s + v.viewCount, 0) / matchingVideos.length
         : 0;
-      const latestMs = matchingVideos.length > 0
-        ? Math.max(...matchingVideos.map((v) => new Date(v.publishedAt).getTime()))
-        : 0;
+      const recentFour  = matchingVideos.filter((v) => new Date(v.publishedAt).getTime() > now - fourMonthMs).length;
+      const recentTwo   = matchingVideos.filter((v) => new Date(v.publishedAt).getTime() > now - twoMonthMs).length;
 
       const tags: string[] = [];
       if (kw.usage        >= highUsageThreshold)      tags.push("高頻出");
       if (avgMatchViews   >  avgViews * 1.5)           tags.push("再生数多");
-      if (latestMs        >  now - threeMonthMs)       tags.push("ハイトレンド");
-      if (latestMs        >  now - oneMonthMs)         tags.push("超ハイトレンド");
+      if (recentFour      >= 2)                        tags.push("ハイトレンド");
+      if (recentTwo       >= 2)                        tags.push("超ハイトレンド");
       if (kw.titleUsage   >= highTitleUsageThreshold)  tags.push("タイトル高頻出");
       if (kw.thumbnailUsage >= highThumbUsageThreshold) tags.push("サムネイル高頻出");
 
