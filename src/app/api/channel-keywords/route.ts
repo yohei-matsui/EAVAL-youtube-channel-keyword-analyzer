@@ -13,8 +13,13 @@ export interface KeywordResult {
 }
 
 function stripCodeFences(raw: string): string {
-  const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  return (match ? match[1] : raw).trim();
+  // Strip code fences if present
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fenced) return fenced[1].trim();
+  // Fallback: extract outermost JSON array directly
+  const arrMatch = raw.match(/(\[[\s\S]*\])/);
+  if (arrMatch) return arrMatch[1].trim();
+  return raw.trim();
 }
 
 // Fetch thumbnail and convert to base64 inline data
