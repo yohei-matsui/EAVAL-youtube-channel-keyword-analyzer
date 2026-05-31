@@ -64,7 +64,7 @@ function TagBadges({ tags }: { tags: string[] }) {
   );
 }
 
-type SortKey = "titleUsage" | "thumbnailUsage" | "keyword" | "category";
+type SortKey = "titleUsage" | "thumbnailUsage" | "keyword";
 
 interface Props {
   keywords: KeywordResult[];
@@ -81,8 +81,7 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
     if (sortKey === "titleUsage") cmp = (a.titleUsage ?? 0) - (b.titleUsage ?? 0);
     else if (sortKey === "thumbnailUsage") cmp = (a.thumbnailUsage ?? 0) - (b.thumbnailUsage ?? 0);
     else if (sortKey === "keyword") cmp = a.keyword.localeCompare(b.keyword, "ja");
-    else if (sortKey === "category") cmp = a.category.localeCompare(b.category, "ja");
-    return sortAsc ? cmp : -cmp;
+return sortAsc ? cmp : -cmp;
   });
 
   const handleSort = (key: SortKey) => {
@@ -101,7 +100,6 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
     { label: "キーワード",  key: "keyword",  cls: "text-left min-w-[110px]" },
     { label: "📝",          key: "titleUsage",     cls: "w-14 text-center" },
     { label: "🖼",          key: "thumbnailUsage", cls: "w-14 text-center" },
-    { label: "カテゴリ",    key: "category", cls: "w-32 text-center" },
     { label: "指標タグ",     key: null,       cls: "w-48 text-center" },
     ...(showSource ? [{ label: "出典", key: null as null, cls: "w-32 text-center" }] : []),
   ];
@@ -114,7 +112,6 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
           <col />
           <col style={{ width: "56px" }} />
           <col style={{ width: "56px" }} />
-          <col style={{ width: "128px" }} />
           <col style={{ width: "192px" }} />
           {showSource && <col style={{ width: "128px" }} />}
         </colgroup>
@@ -162,7 +159,6 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
                   <td className="px-2 py-3 text-center">
                     <span className="text-xs font-bold" style={{ color: "#9D174D" }}>{kw.thumbnailUsage ?? 0}</span>
                   </td>
-                  <td className="px-3 py-3 text-center"><CategoryBadge category={kw.category} /></td>
                   <td className="px-3 py-3"><TagBadges tags={kw.tags ?? []} /></td>
                   {showSource && (
                     <td className="px-3 py-3 text-center"><SourceBadge source={kw.source ?? "タイトル"} /></td>
