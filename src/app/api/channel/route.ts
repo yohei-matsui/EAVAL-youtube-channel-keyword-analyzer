@@ -97,17 +97,19 @@ async function fetchChannelVideos(
   order: "date" | "viewCount",
   maxResults: number
 ): Promise<VideoItem[]> {
-  const ids: string[] = [];
+  const results: VideoItem[] = [];
+  const seenIds = new Set<string>();
   let pageToken: string | undefined;
+  const type = order === "date" ? "recent" : "popular";
 
-  while (ids.length < maxResults) {
-    const remaining = maxResults - ids.length;
+  while (results.length < maxResults) {
+    // Fetch a batch of IDs from search API
     const url = new URL("https://www.googleapis.com/youtube/v3/search");
     url.searchParams.set("part", "id");
     url.searchParams.set("channelId", channelId);
     url.searchParams.set("type", "video");
     url.searchParams.set("order", order);
-    url.searchParams.set("maxResults", String(Math.min(remaining, 50)));
+    url.searchParams.set("maxResults", "50");
     url.searchParams.set("key", apiKey);
     if (pageToken) url.searchParams.set("pageToken", pageToken);
 
@@ -116,24 +118,27 @@ async function fetchChannelVideos(
 
     if (data.error) throw new Error(data.error.message);
 
+    const batchIds: string[] = [];
     for (const item of data.items ?? []) {
-      if (item.id?.videoId) ids.push(item.id.videoId);
+      if (item.id?.videoId && !seenIds.has(item.id.videoId)) {
+        seenIds.add(item.id.videoId);
+        batchIds.push(item.id.videoId);
+      }
+    }
+
+    // fetchVideoDetails already filters out shorts (≤180s)
+    const details = await fetchVideoDetails(batchIds, apiKey);
+    for (const id of batchIds) {
+      if (details.has(id) && results.length < maxResults) {
+        results.push({ id, type, ...(details.get(id)!) });
+      }
     }
 
     pageToken = data.nextPageToken;
     if (!pageToken) break;
   }
 
-  const details = await fetchVideoDetails(ids, apiKey);
-  const type = order === "date" ? "recent" : "popular";
-
-  return ids
-    .filter((id) => details.has(id))
-    .map((id) => ({
-      id,
-      type,
-      ...(details.get(id)!),
-    }));
+  return results;
 }
 
 export async function POST(request: NextRequest) {
