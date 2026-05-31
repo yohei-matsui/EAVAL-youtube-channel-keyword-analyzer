@@ -202,6 +202,7 @@ export default function ChannelPage() {
   const [channelData, setChannelData] = useState<ChannelData | null>(null);
   const [keywords, setKeywords] = useState<KeywordResult[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const isRunning = step === "fetching" || step === "analyzing";
@@ -213,11 +214,15 @@ export default function ChannelPage() {
     setChannelData(null);
     setKeywords([]);
     setSelectedCategory(null);
+    setSelectedTags([]);
   };
 
-  const filteredKeywords = selectedCategory
-    ? keywords.filter((k) => k.category === selectedCategory)
-    : keywords;
+  const filteredKeywords = keywords
+    .filter((k) => !selectedCategory || k.category === selectedCategory)
+    .filter((k) => selectedTags.length === 0 || selectedTags.every((t) => k.tags?.includes(t)));
+
+  const toggleTag = (tag: string) =>
+    setSelectedTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]);
 
   const handleAnalyze = useCallback(async () => {
     if (!canRun) return;
@@ -510,24 +515,46 @@ export default function ChannelPage() {
                   <span>🖼</span><span className="font-semibold">サムネイル</span><span className="text-gray-400">— サムネイル画像内テキストへの出現数</span>
                 </span>
               </div>
-              <p className="mb-2 text-[11px] font-semibold text-gray-500">指標タグの説明</p>
+              <p className="mb-2 text-[11px] font-semibold text-gray-500">
+                指標タグの説明
+                <span className="ml-1.5 font-normal text-gray-400">（タグをクリックして絞り込み・複数選択可）</span>
+              </p>
               <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                 {[
-                  { tag: "高頻出",         bg: "#FEF3C7", color: "#92400E", desc: "タイトル＋サムネイルの合計出現数が多い" },
-                  { tag: "再生数多",       bg: "#D1FAE5", color: "#065F46", desc: "関連動画の平均再生数がチャンネル平均の1.5倍超" },
-                  { tag: "ハイトレンド",   bg: "#DBEAFE", color: "#1E40AF", desc: "4ヶ月以内の投稿に2件以上含まれる" },
-                  { tag: "超ハイトレンド", bg: "#EDE9FE", color: "#5B21B6", desc: "2ヶ月以内の投稿に2件以上含まれる" },
-                  { tag: "タイトル高頻出", bg: "#E0F2FE", color: "#0369A1", desc: "タイトルへの出現が3件以上" },
+                  { tag: "高頻出",          bg: "#FEF3C7", color: "#92400E", desc: "タイトル＋サムネイルの合計出現数が多い" },
+                  { tag: "再生数多",        bg: "#D1FAE5", color: "#065F46", desc: "関連動画の平均再生数がチャンネル平均の1.5倍超" },
+                  { tag: "ハイトレンド",    bg: "#DBEAFE", color: "#1E40AF", desc: "4ヶ月以内の投稿に2件以上含まれる" },
+                  { tag: "超ハイトレンド",  bg: "#EDE9FE", color: "#5B21B6", desc: "2ヶ月以内の投稿に2件以上含まれる" },
+                  { tag: "タイトル高頻出",  bg: "#E0F2FE", color: "#0369A1", desc: "タイトルへの出現が3件以上" },
                   { tag: "サムネイル高頻出",bg: "#FCE7F3", color: "#9D174D", desc: "サムネイル内テキストへの出現が3件以上" },
-                ].map(({ tag, bg, color, desc }) => (
-                  <div key={tag} className="flex items-center gap-1.5">
-                    <span style={{ backgroundColor: bg, color }} className="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold flex-shrink-0">
-                      {tag}
-                    </span>
-                    <span className="text-[11px] text-gray-500">{desc}</span>
-                  </div>
-                ))}
+                ].map(({ tag, bg, color, desc }) => {
+                  const active = selectedTags.includes(tag);
+                  return (
+                    <div key={tag} className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => toggleTag(tag)}
+                        style={{
+                          backgroundColor: active ? color : bg,
+                          color: active ? "#fff" : color,
+                          outline: active ? `2px solid ${color}` : "none",
+                        }}
+                        className="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold flex-shrink-0 transition-all"
+                      >
+                        {tag}
+                      </button>
+                      <span className="text-[11px] text-gray-500">{desc}</span>
+                    </div>
+                  );
+                })}
               </div>
+              {selectedTags.length > 0 && (
+                <button
+                  onClick={() => setSelectedTags([])}
+                  className="mt-2 text-[11px] text-red-400 underline hover:text-red-600"
+                >
+                  フィルターをリセット
+                </button>
+              )}
             </div>
 
             <p className="text-[11px] text-gray-400">
