@@ -64,7 +64,7 @@ function TagBadges({ tags }: { tags: string[] }) {
   );
 }
 
-type SortKey = "usage" | "keyword" | "category";
+type SortKey = "titleUsage" | "thumbnailUsage" | "keyword" | "category";
 
 interface Props {
   keywords: KeywordResult[];
@@ -72,13 +72,14 @@ interface Props {
 }
 
 export function KeywordsTable({ keywords, showSource = false }: Props) {
-  const [sortKey, setSortKey] = useState<SortKey>("usage");
+  const [sortKey, setSortKey] = useState<SortKey>("titleUsage");
   const [sortAsc, setSortAsc] = useState(false);
   const [expanded, setExpanded] = useState<number | null>(null);
 
   const sorted = [...keywords].sort((a, b) => {
     let cmp = 0;
-    if (sortKey === "usage") cmp = a.usage - b.usage;
+    if (sortKey === "titleUsage") cmp = (a.titleUsage ?? 0) - (b.titleUsage ?? 0);
+    else if (sortKey === "thumbnailUsage") cmp = (a.thumbnailUsage ?? 0) - (b.thumbnailUsage ?? 0);
     else if (sortKey === "keyword") cmp = a.keyword.localeCompare(b.keyword, "ja");
     else if (sortKey === "category") cmp = a.category.localeCompare(b.category, "ja");
     return sortAsc ? cmp : -cmp;
@@ -98,7 +99,8 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
   const cols: { label: string; key: SortKey | null; cls: string }[] = [
     { label: "#",          key: null,       cls: "w-9 text-center" },
     { label: "キーワード",  key: "keyword",  cls: "text-left min-w-[110px]" },
-    { label: "使用数",      key: "usage",    cls: "w-28 text-center" },
+    { label: "📝",          key: "titleUsage",     cls: "w-14 text-center" },
+    { label: "🖼",          key: "thumbnailUsage", cls: "w-14 text-center" },
     { label: "カテゴリ",    key: "category", cls: "w-32 text-center" },
     { label: "指標タグ",     key: null,       cls: "w-48 text-center" },
     ...(showSource ? [{ label: "出典", key: null as null, cls: "w-32 text-center" }] : []),
@@ -110,7 +112,8 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
         <colgroup>
           <col style={{ width: "36px" }} />
           <col />
-          <col style={{ width: "112px" }} />
+          <col style={{ width: "56px" }} />
+          <col style={{ width: "56px" }} />
           <col style={{ width: "128px" }} />
           <col style={{ width: "192px" }} />
           {showSource && <col style={{ width: "128px" }} />}
@@ -153,19 +156,11 @@ export function KeywordsTable({ keywords, showSource = false }: Props) {
                       {isExpanded && <span className="text-[10px]" style={{ color: "#8A8070" }}>▲</span>}
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-center">
-                    <div className="flex flex-col items-center gap-0.5">
-                      <span className="flex items-center gap-1 text-xs" style={{ color: "#1E40AF" }}>
-                        <span className="text-[10px]">📝</span>
-                        <span className="font-bold">{kw.titleUsage ?? 0}</span>
-                        <span className="text-[10px] opacity-60">件</span>
-                      </span>
-                      <span className="flex items-center gap-1 text-xs" style={{ color: "#9D174D" }}>
-                        <span className="text-[10px]">🖼</span>
-                        <span className="font-bold">{kw.thumbnailUsage ?? 0}</span>
-                        <span className="text-[10px] opacity-60">件</span>
-                      </span>
-                    </div>
+                  <td className="px-2 py-3 text-center">
+                    <span className="text-xs font-bold" style={{ color: "#1E40AF" }}>{kw.titleUsage ?? 0}</span>
+                  </td>
+                  <td className="px-2 py-3 text-center">
+                    <span className="text-xs font-bold" style={{ color: "#9D174D" }}>{kw.thumbnailUsage ?? 0}</span>
                   </td>
                   <td className="px-3 py-3 text-center"><CategoryBadge category={kw.category} /></td>
                   <td className="px-3 py-3"><TagBadges tags={kw.tags ?? []} /></td>
