@@ -474,37 +474,6 @@ export default function ChannelPage() {
               <ExportButtons keywords={keywords} channelName={channelData.channelName} />
             </div>
 
-            {/* Category pills */}
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                  selectedCategory === null
-                    ? "border-red-400 bg-red-500 text-white"
-                    : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100"
-                }`}
-              >
-                すべて <strong className={selectedCategory === null ? "text-white" : "text-gray-700"}>{keywords.length}</strong>
-              </button>
-              {Array.from(new Set(keywords.map((k) => k.category))).map((cat) => {
-                const cnt = keywords.filter((k) => k.category === cat).length;
-                const isActive = selectedCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(isActive ? null : cat)}
-                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
-                      isActive
-                        ? "border-red-400 bg-red-500 text-white"
-                        : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100"
-                    }`}
-                  >
-                    {cat} <strong className={isActive ? "text-white" : "text-gray-700"}>{cnt}</strong>
-                  </button>
-                );
-              })}
-            </div>
-
             {/* Tag legend */}
             <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
               <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1">
