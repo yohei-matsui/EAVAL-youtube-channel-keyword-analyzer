@@ -540,7 +540,7 @@ export default function ChannelPage() {
               ※180秒（3分）以下の短尺動画は除外しています
             </p>
             <p className="text-[11px] text-gray-400">
-              列ヘッダーをクリックしてソート・行をクリックして理由・関連動画を展開
+              列ヘッダーをクリックしてソート・<span className="font-semibold text-gray-500">行をクリックすると「理由」と「関連動画タイトル」が確認できます</span>
             </p>
 
             <KeywordsTable keywords={filteredKeywords} showSource={true} />
