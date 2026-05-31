@@ -303,6 +303,16 @@ export default function ChannelPage() {
       {/* ── Main ────────────────────────────────────────────────────────── */}
       <main className="mx-auto max-w-3xl space-y-4 px-5 py-6">
 
+        {/* Overview */}
+        <div className="rounded-2xl border border-red-100 bg-red-50 px-5 py-4">
+          <p className="text-sm leading-relaxed text-gray-700">
+            このツールは、指定したチャンネルの動画タイトルとサムネイル画像をAIが解析し、再生数を伸ばしているキーワードを自動で抽出します。
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-gray-700">
+            「どんな言葉が視聴者に刺さっているか」「どのキーワードがトレンドか」が一目でわかるため、次の動画タイトルやサムネイルの制作に活かせます。競合チャンネルの分析にも使うことで、参入すべきテーマや避けるべき表現の判断材料にもなります。
+          </p>
+        </div>
+
         {/* Step 1 — API キー設定 */}
         <StepCard
           number={1}
