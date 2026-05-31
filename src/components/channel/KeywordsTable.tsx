@@ -184,7 +184,17 @@ return sortAsc ? cmp : -cmp;
                               <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold" style={{ backgroundColor: "#2C2C2C", color: "#F5F0E8" }}>
                                 {vi + 1}
                               </span>
-                              {v}
+                              {v.url ? (
+                                <a href={v.url} target="_blank" rel="noopener noreferrer"
+                                  className="underline underline-offset-2 hover:opacity-70 transition-opacity"
+                                  style={{ color: "#1E40AF" }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {v.title}
+                                </a>
+                              ) : (
+                                <span>{v.title}</span>
+                              )}
                             </li>
                           ))}
                         </ul>

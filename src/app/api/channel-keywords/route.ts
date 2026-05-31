@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import { VideoItem } from "../channel/route";
 
+export interface VideoRef {
+  title: string;
+  url: string | null;
+}
+
 export interface KeywordResult {
   keyword: string;
   usage: number;
@@ -10,7 +15,7 @@ export interface KeywordResult {
   reason: string;
   category: string;
   points: number;
-  videos: string[];
+  videos: VideoRef[];
   source: "タイトル" | "サムネイル" | "両方";
   tags: string[];
 }
@@ -177,7 +182,14 @@ export async function POST(request: NextRequest) {
       if (kw.titleUsage   >= highTitleUsageThreshold)  tags.push("タイトル高頻出");
       if (kw.thumbnailUsage >= highThumbUsageThreshold) tags.push("サムネイル高頻出");
 
-      return { ...kw, tags };
+      // Enrich videos array with YouTube URLs by title matching
+      const enrichedVideos = ((kw.videos ?? []) as (string | { title: string })[]).map((v) => {
+        const title = typeof v === "string" ? v : v.title;
+        const match = videos.find((vid) => vid.title === title || vid.title.includes(title) || title.includes(vid.title));
+        return { title, url: match ? `https://www.youtube.com/watch?v=${match.id}` : null };
+      });
+
+      return { ...kw, tags, videos: enrichedVideos };
     });
   } catch {
     console.error("[channel-keywords] Parse failed. Raw:", raw.slice(0, 300));
