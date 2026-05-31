@@ -154,10 +154,14 @@ return sortAsc ? cmp : -cmp;
                     </div>
                   </td>
                   <td className="px-2 py-3 text-center">
-                    <span className="text-xs font-bold" style={{ color: "#1E40AF" }}>{kw.titleUsage ?? 0}</span>
+                    {(kw.titleUsage ?? 0) > 0
+                      ? <span className="text-xs font-bold" style={{ color: "#1E40AF" }}>{kw.titleUsage}</span>
+                      : <span className="text-xs" style={{ color: "#C0B8A8" }}>—</span>}
                   </td>
                   <td className="px-2 py-3 text-center">
-                    <span className="text-xs font-bold" style={{ color: "#9D174D" }}>{kw.thumbnailUsage ?? 0}</span>
+                    {(kw.thumbnailUsage ?? 0) > 0
+                      ? <span className="text-xs font-bold" style={{ color: "#9D174D" }}>{kw.thumbnailUsage}</span>
+                      : <span className="text-xs" style={{ color: "#C0B8A8" }}>—</span>}
                   </td>
                   <td className="px-3 py-3"><TagBadges tags={kw.tags ?? []} /></td>
                   {showSource && (
