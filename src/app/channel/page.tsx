@@ -324,7 +324,7 @@ export default function ChannelPage() {
               { step: 4, text: "抽出されたキーワードと指標タグを確認し、次の動画タイトル・サムネイル制作に活用する" },
             ].map(({ step, text }) => (
               <li key={step} className="flex items-start gap-3">
-                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-[11px] font-bold text-red-400">{step}</span>
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-[11px] font-bold text-gray-500">{step}</span>
                 <span className="text-sm text-gray-600">{text}</span>
               </li>
             ))}
