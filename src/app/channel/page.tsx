@@ -313,6 +313,24 @@ export default function ChannelPage() {
           </p>
         </div>
 
+        {/* How to use */}
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-bold text-gray-800">使い方</h2>
+          <ol className="space-y-2">
+            {[
+              { step: 1, text: "YouTube Data API v3キーとGemini APIキーを取得し、下のStep 1に入力する" },
+              { step: 2, text: "分析したいチャンネルのURLまたは@ハンドルをStep 2に入力する" },
+              { step: 3, text: "「キーワード分析スタート」を押すと、動画データ取得→AI分析が自動で行われる" },
+              { step: 4, text: "抽出されたキーワードと指標タグを確認し、次の動画タイトル・サムネイル制作に活用する" },
+            ].map(({ step, text }) => (
+              <li key={step} className="flex items-start gap-3">
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">{step}</span>
+                <span className="text-sm text-gray-600">{text}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
         {/* Step 1 — API キー設定 */}
         <StepCard
           number={1}
