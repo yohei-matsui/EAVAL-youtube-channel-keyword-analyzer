@@ -294,8 +294,8 @@ export default function ChannelPage() {
           </div>
           {/* Logo */}
           <img
-            src="https://storage.googleapis.com/studio-design-asset-files/projects/JpOLB76daQ/s-180x251_webp_88dde9a2-118b-4761-b90e-f95079ff81ac.webp"
-            alt="logo"
+            src="/eaval-logo.png"
+            alt="EAVAL"
             className="h-9 w-auto object-contain"
           />
         </div>
