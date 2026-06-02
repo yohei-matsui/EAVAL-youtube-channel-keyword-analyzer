@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { Key, Sparkles, Play, BarChart2, ArrowRight } from "lucide-react";
 import { KeywordResult } from "@/app/api/channel-keywords/route";
 import { VideoItem } from "@/app/api/channel/route";
 import { KeywordsTable } from "@/components/channel/KeywordsTable";
@@ -314,22 +315,35 @@ export default function ChannelPage() {
         </div>
 
         {/* How to use */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 text-sm font-bold text-gray-800">使い方</h2>
-          <ol className="space-y-2">
-            {[
-              { step: 1, text: "YouTube Data API v3キーとGemini APIキーを取得し、下のStep 1に入力する" },
-              { step: 2, text: "分析したいチャンネルのURLまたは@ハンドルをStep 2に入力する" },
-              { step: 3, text: "「キーワード分析スタート」を押すと、動画データ取得→AI分析が自動で行われる" },
-              { step: 4, text: "抽出されたキーワードと指標タグを確認し、次の動画タイトル・サムネイル制作に活用する" },
-            ].map(({ step, text }) => (
-              <li key={step} className="flex items-start gap-3">
-                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-[11px] font-bold text-gray-500">{step}</span>
-                <span className="text-sm text-gray-600">{text}</span>
-              </li>
+        <section className="pb-2">
+          <p className="mb-5 text-center text-[11px] font-semibold uppercase tracking-widest text-slate-400">使い方</p>
+          <div className="flex items-stretch gap-1.5">
+            {([
+              { step: "1", icon: <Key className="h-5 w-5" />,      label: "YouTube\nAPIキー取得",    desc: "Google Cloud Console で YouTube Data API v3 を有効化する" },
+              { step: "2", icon: <Sparkles className="h-5 w-5" />, label: "Gemini\nAPIキー取得",     desc: "Google AI Studio で Gemini API キーを無料発行する" },
+              { step: "3", icon: <Play className="h-5 w-5" />,     label: "チャンネルURLを\n入力・分析", desc: "分析したいチャンネルのURLや@ハンドルを貼り付けてスタート" },
+              { step: "4", icon: <BarChart2 className="h-5 w-5" />,label: "キーワードで\n戦略を立てる",  desc: "指標タグを確認し、次の動画タイトル・サムネイル制作に活かす" },
+            ] as const).map((item, i) => (
+              <div key={item.step} className="flex flex-1 items-start">
+                <div className="flex flex-1 flex-col items-center gap-2.5 rounded-xl border border-slate-100 bg-white px-2 py-4 text-center shadow-sm">
+                  <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-500 shadow-sm">
+                    {item.icon}
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold text-slate-700 ring-1 ring-slate-100 shadow-sm">
+                      {item.step}
+                    </span>
+                  </div>
+                  <p className="whitespace-pre-line text-[11px] font-bold leading-tight text-slate-800">{item.label}</p>
+                  <p className="text-[10px] leading-snug text-slate-500">{item.desc}</p>
+                </div>
+                {i < 3 && (
+                  <div className="shrink-0 px-0.5 pt-5 text-slate-300">
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
             ))}
-          </ol>
-        </div>
+          </div>
+        </section>
 
         {/* Step 1 — API キー設定 */}
         <StepCard
