@@ -328,7 +328,7 @@ export default function ChannelPage() {
                 <div className="flex flex-1 flex-col items-center gap-2.5 rounded-xl border border-slate-100 bg-white px-2 py-4 text-center shadow-sm">
                   <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-500 shadow-sm">
                     {item.icon}
-                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold text-slate-700 ring-1 ring-slate-100 shadow-sm">
+                    <span className="absolute -left-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold text-slate-700 ring-1 ring-slate-100 shadow-sm">
                       {item.step}
                     </span>
                   </div>
