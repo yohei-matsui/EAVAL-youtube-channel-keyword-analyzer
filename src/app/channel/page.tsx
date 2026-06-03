@@ -292,12 +292,6 @@ export default function ChannelPage() {
               <p className="text-[11px] text-gray-400">by 株式会社EAVAL</p>
             </div>
           </div>
-          {/* Logo */}
-          <img
-            src="/eaval-logo.png"
-            alt="EAVAL"
-            className="h-9 w-auto object-contain"
-          />
         </div>
       </header>
 
