@@ -279,7 +279,13 @@ export default function ChannelPage() {
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header className="border-b border-gray-100 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3">
-          <img src="/site-logo.png" alt="YouTube チャンネル内キーワード分析ツール" className="h-10 w-auto object-contain" />
+          <div className="flex items-center gap-2.5">
+            <img src="/site-logo.png" alt="logo" className="h-9 w-auto object-contain" />
+            <div>
+              <h1 className="text-sm font-bold text-gray-900">YouTube チャンネル内キーワード分析ツール</h1>
+              <p className="text-[11px] text-gray-400">by 株式会社EAVAL</p>
+            </div>
+          </div>
         </div>
       </header>
 
