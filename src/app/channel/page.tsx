@@ -279,19 +279,7 @@ export default function ChannelPage() {
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header className="border-b border-gray-100 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-red-500">
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="white">
-                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5V8.5l6.5 3.5-6.5 3.5z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-gray-900">
-                YouTube チャンネル内キーワード分析ツール
-              </h1>
-              <p className="text-[11px] text-gray-400">by 株式会社EAVAL</p>
-            </div>
-          </div>
+          <img src="/site-logo.png" alt="YouTube チャンネル内キーワード分析ツール" className="h-10 w-auto object-contain" />
         </div>
       </header>
 
