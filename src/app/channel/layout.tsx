@@ -10,5 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function ChannelLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <link rel="icon" href="/site-logo.png" type="image/png" />
+      <link rel="apple-touch-icon" href="/site-logo.png" />
+      {children}
+    </>
+  );
 }
