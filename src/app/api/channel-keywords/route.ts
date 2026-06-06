@@ -21,13 +21,15 @@ export interface KeywordResult {
 }
 
 function stripCodeFences(raw: string): string {
-  // Strip code fences if present
-  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  if (fenced) return fenced[1].trim();
-  // Fallback: extract outermost JSON array directly
-  const arrMatch = raw.match(/(\[[\s\S]*\])/);
-  if (arrMatch) return arrMatch[1].trim();
-  return raw.trim();
+  // Remove opening fence (```json or ```) from start, then closing ``` from end
+  let s = raw.trim();
+  s = s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/i, "").trim();
+  // If it now starts with [ it's ready to parse
+  if (s.startsWith("[")) return s;
+  // Fallback: extract outermost JSON array from anywhere in the string
+  const arrMatch = raw.match(/\[[\s\S]*\]/);
+  if (arrMatch) return arrMatch[0].trim();
+  return s;
 }
 
 // Fetch thumbnail and convert to base64 inline data
