@@ -576,12 +576,10 @@ export default function ChannelPage() {
       </main>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="mt-8 pb-8 px-5">
-        <div className="mx-auto max-w-3xl">
-          <a href="https://eaval.shop/" target="_blank" rel="noopener noreferrer" className="block transition-opacity hover:opacity-80">
-            <img src="/eaval-banner.png" alt="EAVAL運用代行" className="w-full rounded-xl object-contain" />
-          </a>
-        </div>
+      <footer className="mx-auto w-full max-w-3xl px-5 pb-8 mt-4">
+        <a href="https://eaval.shop/" target="_blank" rel="noopener noreferrer" className="block transition-opacity hover:opacity-80">
+          <img src="/eaval-banner.png" alt="EAVAL運用代行" className="w-full rounded-xl object-contain" />
+        </a>
       </footer>
     </div>
   );
