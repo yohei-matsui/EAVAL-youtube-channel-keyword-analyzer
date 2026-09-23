@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
 
     let friendlyError = `Gemini APIエラー: ${msg}`;
     if (msg.includes("503") || msg.toLowerCase().includes("service unavailable") || msg.toLowerCase().includes("high demand")) {
-      friendlyError = "Gemini AIが現在混雑しています。しばらく待ってから再試行するか、Step 1の「使用モデル」を gemini-2.0-flash に切り替えてお試しください。";
+      friendlyError = "Gemini AIが現在混雑しています。しばらく待ってから再試行するか、Step 1の「使用モデル」を gemini-2.0-flash（軽量）に切り替えてお試しください。";
     } else if (msg.includes("429") || msg.toLowerCase().includes("quota")) {
       friendlyError = "APIの利用制限に達しました。しばらく待ってから再試行するか、Step 1の「使用モデル」を切り替えてお試しください。";
     } else if (msg.includes("401") || msg.toLowerCase().includes("api key")) {

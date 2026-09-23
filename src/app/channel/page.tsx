@@ -196,7 +196,7 @@ function StatChip({ value, label }: { value: string | number; label: string }) {
 export default function ChannelPage() {
   const [youtubeKey, setYoutubeKey] = useState("");
   const [geminiKey, setGeminiKey] = useState("");
-  const [geminiModel, setGeminiModel] = useState("gemini-2.5-flash");
+  const [geminiModel, setGeminiModel] = useState("gemini-2.5-flash-preview-05-20");
   const [channelInput, setChannelInput] = useState("");
   const [step, setStep] = useState<Step>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -270,8 +270,9 @@ export default function ChannelPage() {
   }, [canRun, youtubeKey, geminiKey, geminiModel, channelInput]);
 
   const models = [
-    { id: "gemini-2.5-flash", label: "gemini-2.5-flash（推奨）" },
-    { id: "gemini-2.0-flash", label: "gemini-2.0-flash" },
+    { id: "gemini-2.5-flash-preview-05-20", label: "gemini-2.5-flash（推奨）" },
+    { id: "gemini-2.5-pro-preview-06-05", label: "gemini-2.5-pro（高精度）" },
+    { id: "gemini-2.0-flash", label: "gemini-2.0-flash（軽量）" },
   ];
 
   return (
@@ -369,8 +370,8 @@ export default function ChannelPage() {
               onChange={setGeminiKey}
               placeholder="AIza."
               disabled={isRunning}
-              helpText="Gemini API Keyの取得方法はこちら（参考サイト）"
-              helpUrl="https://monomonotech.jp/kurage/memo/m240725_get_gemini_api_key.html"
+              helpText="Gemini APIキーの取得はこちら（Google AI Studio）"
+              helpUrl="https://aistudio.google.com/app/apikey"
             >
               <div className="mt-1 flex flex-col gap-1.5">
                 <p className="text-xs font-medium text-gray-600">使用モデル</p>
