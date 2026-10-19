@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Key, Sparkles, Play, BarChart2, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Key, Sparkles, Play, BarChart2, ArrowRight, BookOpen } from "lucide-react";
 import { KeywordResult } from "@/app/api/channel-keywords/route";
 import { VideoItem } from "@/app/api/channel/route";
 import { KeywordsTable } from "@/components/channel/KeywordsTable";
@@ -287,6 +288,13 @@ export default function ChannelPage() {
               <p className="text-[11px] text-gray-400">by 株式会社EAVAL</p>
             </div>
           </div>
+          <Link
+            href="/channel/guide"
+            className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-red-300 hover:text-red-500"
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            できること・活用方法
+          </Link>
         </div>
       </header>
 
@@ -301,6 +309,10 @@ export default function ChannelPage() {
           <p className="mt-2 text-sm leading-relaxed text-gray-700">
             「どんな言葉が視聴者に刺さっているか」「どのキーワードがトレンドか」が一目でわかるため、次の動画タイトルやサムネイルの制作に活かせます。競合チャンネルの分析にも使うことで、参入すべきテーマや避けるべき表現の判断材料にもなります。
           </p>
+          <Link href="/channel/guide" className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-red-500 underline-offset-2 hover:underline">
+            できること・わかること・活用方法を詳しく見る
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
         {/* How to use */}
